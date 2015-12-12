@@ -16,12 +16,13 @@
 # @current_floor variable -> stores floor elevator is passing/stopped on
 # @total_trips variable -> stores the number of trips elevator has taken
 class Elevator
-  attr_accessor :occupied, :current_floor, :total_trips
+  attr_accessor :occupied, :current_floor, :total_trips, :direction
 
   def initialize
     @occupied = false
     @current_floor = 1
     @total_trips = 0
+    @direction = 'stopped'
   end
 
   def door_opening
@@ -50,19 +51,25 @@ class Elevator
     door_opening
     door_closing
     @occupied = true
+    @direction = direction
     floor_reporting(starting_floor, ending_floor, direction)
     door_opening
     door_closing
     @occupied = false
     @total_trips += 1
+    @direction = 'stopped'
   end
 
   def occupied?
     @occupied
   end
 
-  def floor_stopped
+  def floor
     @current_floor
+  end
+
+  def direciton
+    @direction
   end
 
   def in_service?
@@ -80,35 +87,56 @@ class Building
     @number_of_floors = floors
     @number_of_elevators = elevators
     @elevators = []
-    @number_of_elevators.times{ @elevators << Elevator.new }
   end
 
-  # def elevators
-  #   # Using @number_of_elevators builds instantiates that number of elevators and
-  #   # Stores them in an array
-  #   @number_of_elevators.times{ @elevators << Elevator.new }
-  # end
+  def elevators
+    # Using @number_of_elevators builds instantiates that number of elevators and
+    # Stores them in an array
+    @number_of_elevators.times{ @elevators << Elevator.new }
+  end
 
   def elevator_on_floor(floor)
     # Checks elevators array to see if any are currently stopped on the given floor
     elevators_on_floor = []
     @elevators.each do |elevator|
-      if elevator.occupied == false && elevator.floor_stopped == floor
+      if elevator.occupied? == false && elevator.floor == floor
         elevators_on_floor << elevator
       end
     end
     elevators_on_floor[0]
   end
 
-  def on_the_move
+  def coming_this_way?(elevator, floor)
+    if elevator.direction == 'up' && elevator.floor < floor
+      true
+    elsif elevator.direction == 'down' && elevator.floor > floor
+      true
+    else
+      false
+    end
+  end
+
+  def on_the_move(floor, direction)
     # Checks elevators array to see if any are occupied and will pass the floor
+    elevators_coming = []
+    @elevators.each do |elevator|
+      if elevator.coming_this_way?
+        elevators_coming << elevator
+      end
+    end
+    elevators_coming[0]
   end
 
-  def closest_unoccupied
+  def closest_unoccupied(floor)
     # Checks elevators array to find closest unoccupied elevator
+    closest_elevator = []
+    @elevators.each do |elevator|
+      
+    end
+    closest_elevator[0]
   end
 
-  def elevator_call(starting_floor, ending_floor, direction)
+  def elevator_call(floor, direction)
     # Returns an elevator based on above listed priorities
   end
 end
