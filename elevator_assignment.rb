@@ -25,15 +25,20 @@ class Elevator
   end
 
   def door_opening
-    # Announces door opening
+    puts 'Door opening'
   end
 
   def door_closing
-    # Announces door closing
+    puts 'Door closing'
   end
 
   def floor_reporting(starting_floor, ending_floor, direction)
     # Announces each floor passed
+    if direction == 'down'
+      starting_floor.downto(ending_floor){|floor| current_floor(floor)}
+    else
+      (starting_floor..ending_floor).each{|floor| current_floor(floor)}
+    end
   end
 
   def call(starting_floor, ending_floor, direction)
@@ -50,8 +55,9 @@ class Elevator
     # Returns occupied variable
   end
 
-  def current_floor
-    # Returns current_floor variable
+  def current_floor(floor)
+    @current_floor = floor
+    puts floor
   end
 
   def in_service?
@@ -78,6 +84,14 @@ class Building
 
   def elevator_on_floor(floor)
     # Checks elevators array to see if any are currently stopped on the given floor
+  end
+
+  def on_the_move
+    # Checks elevators array to see if any are occupied and will pass the floor
+  end
+
+  def closest_unoccupied
+    # Checks elevators array to find closest unoccupied elevator
   end
 
   def elevator_call(starting_floor, ending_floor, direction)
