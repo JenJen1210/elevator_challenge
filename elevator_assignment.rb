@@ -32,6 +32,11 @@ class Elevator
     puts 'Door closing'
   end
 
+  def current_floor(floor)
+    @current_floor = floor
+    puts floor
+  end
+
   def floor_reporting(starting_floor, ending_floor, direction)
     # Announces each floor passed
     if direction == 'down'
@@ -42,26 +47,26 @@ class Elevator
   end
 
   def call(starting_floor, ending_floor, direction)
-    # Calls door_opening
-    # Calls door_closing
-    # Sets occupied variable to true
-    # Announces each floor from starting floor to ending floor (ascending or descending)
-    # Calls door_opening
-    # Calls door_closing
-    # Sets occupied variable to false
+    door_opening
+    door_closing
+    @occupied = true
+    floor_reporting(starting_floor, ending_floor, direction)
+    door_opening
+    door_closing
+    @occupied = false
+    @total_trips += 1
   end
 
   def occupied?
-    # Returns occupied variable
+    @occupied
   end
 
-  def current_floor(floor)
-    @current_floor = floor
-    puts floor
+  def floor_stopped
+    @current_floor
   end
 
   def in_service?
-    # Returns true if the @total_trips variable is < 100
+    @total_trips < 100 ? true : false
   end
 end
 
@@ -75,15 +80,24 @@ class Building
     @number_of_floors = floors
     @number_of_elevators = elevators
     @elevators = []
+    @number_of_elevators.times{ @elevators << Elevator.new }
   end
 
-  def elevators
-    # Using @number_of_elevators builds instantiates that number of elevators and
-    # Stores them in an array
-  end
+  # def elevators
+  #   # Using @number_of_elevators builds instantiates that number of elevators and
+  #   # Stores them in an array
+  #   @number_of_elevators.times{ @elevators << Elevator.new }
+  # end
 
   def elevator_on_floor(floor)
     # Checks elevators array to see if any are currently stopped on the given floor
+    elevators_on_floor = []
+    @elevators.each do |elevator|
+      if elevator.occupied == false && elevator.floor_stopped == floor
+        elevators_on_floor << elevator
+      end
+    end
+    elevators_on_floor[0]
   end
 
   def on_the_move
