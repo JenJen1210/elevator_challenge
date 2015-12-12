@@ -103,7 +103,7 @@ class Building
         elevators_on_floor << elevator
       end
     end
-    elevators_on_floor[0]
+    elevators_on_floor.length > 0 ? elevators_on_floor[0] : false
   end
 
   def coming_this_way?(elevator, floor)
@@ -124,19 +124,30 @@ class Building
         elevators_coming << elevator
       end
     end
-    elevators_coming[0]
+    elevators_coming.length > 0 ? elevators_coming[0] : false
   end
 
   def closest_unoccupied(floor)
     # Checks elevators array to find closest unoccupied elevator
-    closest_elevator = []
+    closest_elevator = ''
+    floors_away = @number_of_floors
     @elevators.each do |elevator|
-      
+      if floors_away > (elevator.floor - floor).abs
+        closest_elevator = elevator
+        floors_away = (elevator.floor - floor).abs
+      end
     end
-    closest_elevator[0]
+    closest_elevator
   end
 
   def elevator_call(floor, direction)
     # Returns an elevator based on above listed priorities
+    if elevator_on_floor(floor) == false && on_the_move(floor, direction) == false
+      closest_unoccupied(floor)
+    elsif elevator_on_floor == false
+      on_the_move(floor, direction)
+    else
+      elevator_on_floor
+    end
   end
 end
